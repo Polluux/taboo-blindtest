@@ -1,0 +1,13 @@
+{
+  "arrowParens": "always",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "trailingComma": "none",
+  "useTabs": false,
+  "singleAttributePerLine": true,
+  "attributeGroups": ["^v-", "^:key$", "^(id|name)$", "^:?class$", "$DEFAULT", "^aria-", "^@"],
+  "attributeSort": "ASC",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}
