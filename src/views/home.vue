@@ -22,7 +22,7 @@
         />
       </a>
     </div>
-    <HelloWorld msg="Vite + Vue" />
+    <HelloWorld msg="The big test !" />
     <router-link
       aria-label="back"
       class="btn"
