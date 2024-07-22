@@ -1,51 +1,29 @@
 <template>
   <div class="flex h-full flex-col items-center justify-center gap-2">
-    <div class="flex gap-5">
-      <a
-        href="https://vitejs.dev"
-        target="_blank"
-      >
-        <img
-          src="/vite.svg"
-          class="logo h-40"
-          alt="Vite logo"
-        />
-      </a>
-      <a
-        href="https://vuejs.org/"
-        target="_blank"
-      >
-        <img
-          src="@/assets/vue.svg"
-          class="logo h-40"
-          alt="Vue logo"
-        />
-      </a>
+    <div v-if="globalStore.userSession">
+      Logged as : {{ globalStore.userSession.user.email }}
     </div>
-    <HelloWorld msg="The big test !" />
-    <router-link
+    <template v-else>
+      <div>
+        User not logged
+      </div>
+      <router-link
       aria-label="back"
       class="btn"
-      :to="{ name: 'test' }"
+      :to="{ name: 'login' }"
       type="button"
-    >
-      <span>to second page</span>
+      >
+      <span>login</span>
     </router-link>
+  </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue';
+import { useGlobalStore } from '@/stores/global';
 
-const a = ref('oui');
+const globalStore = useGlobalStore();
+
+// const musics = await supabase.from('musics').select();
+// console.log(musics);
 </script>
-
-<style scoped>
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>

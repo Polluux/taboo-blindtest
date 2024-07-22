@@ -3,6 +3,7 @@
 @import 'tailwindcss/utilities';
 
 @import '@/styles/btn.css';
+@import '@/styles/input.css';
 
 @layer base {
   html {

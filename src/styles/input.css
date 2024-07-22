@@ -1,0 +1,5 @@
+@layer components {
+  input{
+    @apply text-neutral-900;
+  }
+}
