@@ -15,8 +15,10 @@ export const useGlobalStore = defineStore('global', {
           const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
           const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
           this.supabaseClient = createClient(supabaseUrl, supabaseKey);
+          return { data: this.supabaseClient, error: null };
         } catch(err) {
           console.error(err);
+          return { data: null, error: err };
         }
       }
     },
@@ -25,19 +27,35 @@ export const useGlobalStore = defineStore('global', {
         if (!this.supabaseClient) this.createDatabaseClient();
         const sessionInfos = await this.supabaseClient?.auth.getSession();
         this.userSession = sessionInfos?.data.session;
+        return this.userSession;
       } catch(err) {
         console.error(err);
+          return { data: null, error: err };
       }
     },
     async login(email: string, password: string) {
       try {
         await this.refreshSession();
         if (this.userSession) return this.userSession;
-        await this.supabaseClient?.auth.signInWithPassword({ email, password });
+        const res = await this.supabaseClient?.auth.signInWithPassword({ email, password });
+        if (res?.error) throw res?.error;
         await this.refreshSession();
-        return this.userSession;
+        return { data: this.userSession, error: null };
       } catch(err) {
         console.error(err);
+        return { data: null, error: err };
+      }
+    },
+    async logout() {
+      try {
+        if (this.userSession && this.supabaseClient) {
+          await this.supabaseClient.auth.signOut();
+          this.userSession = null;
+        }
+        return { data: true, error: null };
+      } catch(err) {
+        console.error(err);
+          return { data: null, error: err };
       }
     }
   }

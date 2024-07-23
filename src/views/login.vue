@@ -1,7 +1,7 @@
 <template>
   <form
     @submit.prevent="login()"
-    class="flex flex-col items-center h-full justify-center gap-2"
+    class="flex h-full flex-col items-center justify-center gap-2"
   >
     <input
       type="mail"
@@ -14,6 +14,13 @@
       v-model="password"
     />
     <button>Submit</button>
+    <div
+      v-if="error"
+      class="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+      role="alert"
+    >
+      {{ error }}
+    </div>
   </form>
 </template>
 
@@ -26,13 +33,17 @@ const globalStore = useGlobalStore();
 
 const mail = ref('');
 const password = ref('');
+const error = ref('');
 
 async function login() {
-  const userData = await globalStore.login(mail.value, password.value);
-  if (userData) {
-    router.replace({ name: 'home' }).catch(() => {/* logout */});
+  error.value = '';
+  const res = await globalStore.login(mail.value, password.value);
+  if (res.data) {
+    router.replace({ name: 'home' }).catch(() => {
+      /* logout */
+    });
   } else {
-    // TODO: error
+    error.value = res.error;
   }
 }
 </script>
