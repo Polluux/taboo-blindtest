@@ -1,43 +1,56 @@
 <template>
-  <form
-    @submit.prevent="login()"
-    class="flex h-full flex-col items-center justify-center gap-2"
-  >
-    <input
-      type="mail"
-      placeholder="email"
-      v-model="mail"
-    />
-    <input
-      type="password"
-      placeholder="password"
-      v-model="password"
-    />
-    <button>Submit</button>
-    <div
-      v-if="error"
-      class="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-      role="alert"
+  <div class="flex h-full flex-col items-center justify-center gap-5">
+    <form
+      @submit.prevent="login()"
+      class="flex flex-col gap-2"
     >
-      {{ error }}
-    </div>
-  </form>
+      <input
+        type="email"
+        placeholder="email"
+        v-model="email"
+      />
+      <input
+        type="password"
+        placeholder="password"
+        v-model="password"
+      />
+      <button>Submit</button>
+
+      <div
+        v-if="error"
+        class="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+        role="alert"
+      >
+        {{ error }}
+      </div>
+    </form>
+
+    <div id="gSignInButton" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { useGlobalStore } from '@/stores/global';
 import router from '@/router';
 
 const globalStore = useGlobalStore();
 
-const mail = ref('');
+const email = ref('');
 const password = ref('');
 const error = ref('');
 
+onMounted(() => {
+  nextTick(() => {
+    if (typeof google !== 'undefined') {
+      initSignIn();
+    }
+  });
+});
+
 async function login() {
   error.value = '';
-  const res = await globalStore.login(mail.value, password.value);
+  const res = await globalStore.login({ auth: { email: email.value, password: password.value } });
   if (res.data) {
     router.replace({ name: 'home' }).catch(() => {
       /* logout */
@@ -46,4 +59,32 @@ async function login() {
     error.value = res.error;
   }
 }
+
+async function handleSignInWithGoogle(response) {
+  error.value = '';
+  const res = await globalStore.login({ provider: { provider: 'google', token: response.credential } });
+  if (res.data) {
+    router.replace({ name: 'home' }).catch(() => {
+      /* logout */
+    });
+  } else {
+    error.value = res.error;
+  }
+}
+
+const initSignIn = () => {
+  google.accounts.id.initialize({
+    client_id: '627081101511-iuhrk9t9g8fm55pju7uqi392agsr988d.apps.googleusercontent.com',
+    callback: handleSignInWithGoogle
+  });
+
+  google.accounts.id.renderButton(document.getElementById('gSignInButton'), {
+    type: 'standard',
+    text: 'sign_in_with',
+    theme: 'outline',
+    size: 'large',
+    width: '400'
+  });
+  google.accounts.id.prompt();
+};
 </script>

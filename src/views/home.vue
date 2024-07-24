@@ -4,7 +4,7 @@
       v-if="globalStore.userSession"
       class="flex items-center gap-2"
     >
-      <div>Logged as : {{ globalStore.userSession.user.email }}</div>
+      <div>Logged as : {{ globalStore.userSession.user.email }} {{ globalStore.userSession.isAdmin ? '[Administrator]' : '' }}</div>
       <button
         class="btn"
         type="button"
@@ -38,7 +38,7 @@
           <th class="border p-4">title</th>
           <th class="border p-4">artist</th>
           <th class="border p-4">words</th>
-          <th v-if="globalStore.userSession" class="border p-4" />
+          <th v-if="globalStore.userSession?.isAdmin" class="border p-4" />
         </tr>
       </thead>
       <tbody>
@@ -48,12 +48,12 @@
           <td class="border p-4">{{ music.title }}</td>
           <td class="border p-4">{{ music.artist }}</td>
           <td class="border p-4">{{ music.words }}</td>
-          <td v-if="globalStore.userSession" class="border p-4"><button class="btn" @click="removeItem(music)">Remove</button></td>
+          <td v-if="globalStore.userSession?.isAdmin" class="border p-4"><button class="btn" @click="removeItem(music)">Remove</button></td>
         </tr>
       </tbody>
     </table>
 
-    <form v-if="globalStore.userSession" @submit.prevent="addItem" class="flex gap-2">
+    <form v-if="globalStore.userSession?.isAdmin" @submit.prevent="addItem" class="flex gap-2">
       <input type="text" placeholder="reference" v-model="lineForm.reference" />
       <input type="text" placeholder="title" v-model="lineForm.title" />
       <input type="text" placeholder="artist" v-model="lineForm.artist" />
