@@ -7,8 +7,10 @@
       placeholder="Search"
       class="h-8"
       @input="startSearch"
+      :disabled="!globalStore.userSession?.idClient"
     />
-    <div v-if="loading">Recherche...</div>
+    <div v-if="!globalStore.userSession?.idClient">You are not allowed to perform a youtube search</div>
+    <div v-else-if="loading">Recherche...</div>
     <div v-else>
       <div v-for="video of data">
         <div
