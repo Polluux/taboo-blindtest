@@ -107,7 +107,7 @@ async function removeItem(music: typeof musics.value[number]) {
   try {
     const res = await globalStore.supabaseClient?.from('musics').delete().eq('id', music.id);
     if (res?.error) throw res?.error;
-    refresh();
+    getMusics();
   } catch (err) {
     console.error(err);
     error.value = err;
@@ -120,7 +120,7 @@ async function addItem() {
     try {
       const res = await globalStore.supabaseClient?.from('musics').insert({ ...lineForm.value, words: lineForm.value.words.split(', ') });
       if (res?.error) throw res?.error;
-      refresh();
+      getMusics();
       lineForm.value = {
         reference: '',
         title: '',
