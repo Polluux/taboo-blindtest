@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.44.4",
+    "@types/youtube": "^0.0.50",
     "@vitejs/plugin-vue": "^5.1.0",
     "@vueuse/core": "^10.11.0",
     "pinia": "^2.1.7",

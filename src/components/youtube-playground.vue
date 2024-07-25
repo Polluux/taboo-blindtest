@@ -12,13 +12,15 @@
     <div v-if="!globalStore.userSession?.idClient">You are not allowed to perform a youtube search</div>
     <div v-else-if="loading">Recherche...</div>
     <div v-else>
-      <div v-for="video of data">
+      <div v-for="video of data" :key="`${video.channelId}-${video.id}`">
         <div
           :url="video.thumbnails.default.url"
           class="h-24 w-32 bg-no-repeat bg-center"
           :style="`background-image: url('${video.thumbnails.default.url}')`"
+          @click="toggleVideo(video)"
         />
-        {{ video.title }}
+        {{ video.title }} {{  video.player.state.playerState ? 'PLAYING' : '' }}
+        <div :id="video.videoId" class="hidden" />
       </div>
     </div>
   </div>
@@ -26,8 +28,9 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/global';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
+import Player from '@/classes/player';
 
 const globalStore = useGlobalStore();
 const search = ref('');
@@ -36,6 +39,7 @@ const loading = ref(false);
 const data = ref([] as any[]);
 
 const startSearch = useDebounceFn(async () => {
+  destroyPlayers();
   loading.value = true;
   try {
     const res = await fetch(
@@ -44,7 +48,7 @@ const startSearch = useDebounceFn(async () => {
     data.value = (await res.json()).items.map((i) => {
       return { ...i.snippet, ...i.id };
     });
-    console.log(data.value);
+    nextTick(initPlayers);
   } catch (err: any) {
     console.error(err);
     error.value = err;
@@ -52,4 +56,25 @@ const startSearch = useDebounceFn(async () => {
     loading.value = false;
   }
 }, 1000);
+
+function destroyPlayers() {
+  data.value.forEach((video) => {
+    video.player?.destroy();
+  });
+}
+
+function initPlayers() {
+  data.value.forEach((video) => {
+    video.player?.destroy();
+    video.player = new Player(video.videoId, video.videoId);
+  });
+}
+
+function toggleVideo(video) {
+  if (video.player.state.playerState) {
+    video.player?.pause();
+  } else {
+    video.player?.play();
+  }
+}
 </script>

@@ -16,7 +16,10 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "types": [
+      "youtube"
+    ]
   },
   "exclude": ["node_modules", "dist"]
 }

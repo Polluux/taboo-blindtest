@@ -12,6 +12,7 @@ module.exports = {
   },
   plugins: ['vue', '@typescript-eslint'],
   globals: {
+    google: true,
     YT: true
   },
   settings: {
