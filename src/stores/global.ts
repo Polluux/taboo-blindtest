@@ -1,4 +1,4 @@
-import { AuthTokenResponse, SignInWithIdTokenCredentials, SignInWithPasswordCredentials, SupabaseClient } from '@supabase/supabase-js';
+import { AuthTokenResponse, Session, SignInWithIdTokenCredentials, SignInWithPasswordCredentials, SupabaseClient } from '@supabase/supabase-js';
 import { defineStore } from 'pinia';
 import { createClient } from '@supabase/supabase-js';
 
@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 export const useGlobalStore = defineStore('global', {
   state: () => ({
     supabaseClient: null as SupabaseClient | null, 
-    userSession: null as any
+    userSession: null as (Session & { isAdmin: boolean, idClient: string }) | null
   }),
   actions: {
     async createDatabaseClient() {
@@ -26,10 +26,15 @@ export const useGlobalStore = defineStore('global', {
       try {
         if (!this.supabaseClient) this.createDatabaseClient();
         const sessionInfos = await this.supabaseClient?.auth.getSession();
-        this.userSession = sessionInfos?.data.session;
-        if (this.userSession) {
-          const profileInfos = await this.supabaseClient?.from('profiles').select();
-          this.userSession.isAdmin = profileInfos?.data[0]?.is_admin || false;
+        if (sessionInfos?.data.session) {
+          const authorisations = await this.supabaseClient?.from('authorisations').select();
+          this.userSession = {
+            ...sessionInfos?.data.session,
+            isAdmin: authorisations?.data?.length ? authorisations?.data[0]?.is_admin : false,
+            idClient: authorisations?.data?.length ? authorisations?.data[0]?.client_id : ''
+          };
+        } else {
+          this.userSession = null;
         }
         return this.userSession;
       } catch(err) {

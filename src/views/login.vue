@@ -74,7 +74,7 @@ async function handleSignInWithGoogle(response) {
 
 const initSignIn = () => {
   google.accounts.id.initialize({
-    client_id: '627081101511-iuhrk9t9g8fm55pju7uqi392agsr988d.apps.googleusercontent.com',
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
     callback: handleSignInWithGoogle
   });
 
