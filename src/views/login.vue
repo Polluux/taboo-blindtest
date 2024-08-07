@@ -1,18 +1,18 @@
 <template>
   <div class="flex h-full flex-col items-center justify-center gap-5">
     <form
-      @submit.prevent="login()"
       class="flex flex-col gap-2"
+      @submit.prevent="login()"
     >
       <input
-        type="email"
-        placeholder="email"
         v-model="email"
+        placeholder="email"
+        type="email"
       />
       <input
-        type="password"
-        placeholder="password"
         v-model="password"
+        placeholder="password"
+        type="password"
       />
       <button>Submit</button>
 
@@ -72,7 +72,7 @@ async function handleSignInWithGoogle(response) {
   }
 }
 
-const initSignIn = () => {
+function initSignIn() {
   google.accounts.id.initialize({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
     callback: handleSignInWithGoogle
