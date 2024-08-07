@@ -18,7 +18,8 @@
       "@/*": ["src/*"]
     },
     "types": [
-      "youtube"
+      "youtube",
+      "google.accounts"
     ]
   },
   "exclude": ["node_modules", "dist"]
